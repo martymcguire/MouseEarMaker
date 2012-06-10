@@ -11,6 +11,8 @@ ArrayList ears = new ArrayList();
 boolean drawing = false;
 Vec2D newEarCtr;
 
+boolean[] keys = new boolean[526];
+
 void setup() {
   size(700, 700);
   loadModel();
@@ -119,4 +121,27 @@ class Ear {
     y = _y;
     r = _r;
   }
+}
+
+boolean checkKey(int k)
+{
+  if (keys.length >= k) {
+    return keys[k];
+  }
+  return false;
+}
+
+void keyPressed()
+{
+  keys[keyCode] = true;
+  // ctrl-z / cmd-z = undo last ear
+  if((checkKey(CONTROL) || checkKey(KeyEvent.VK_META)) && checkKey(KeyEvent.VK_Z)) {
+    if(ears.size() > 0)
+      ears.remove(ears.size() - 1);
+  }
+}
+
+void keyReleased()
+{
+  keys[keyCode] = false;
 }
