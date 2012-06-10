@@ -7,6 +7,9 @@ import toxi.geom.mesh.subdiv.*;
 WETriangleMesh thing;
 float thingScale;
 
+boolean drawing = false;
+Vec2D newEarCtr;
+
 void setup() {
   size(700, 700);
   loadModel();
@@ -25,6 +28,22 @@ void draw() {
     pt = modelToScreen(f.b.x, f.b.y); vertex(pt.x, pt.y);
     pt = modelToScreen(f.c.x, f.c.y); vertex(pt.x, pt.y);
     endShape(CLOSE);
+  }
+
+  // draw new mouse ear, if any is being drawn
+  drawNewMouseEar();
+}
+
+void drawNewMouseEar() {
+  if (drawing) {
+    stroke(255, 0, 0);
+    point(newEarCtr.x, newEarCtr.y);
+    noStroke();
+    fill(8, 134, 86, 128);
+    float magx = newEarCtr.x - mouseX;
+    float magy = newEarCtr.y - mouseY;
+    float d = 2 * sqrt(sq(magx) + sq(magy));
+    ellipse(newEarCtr.x, newEarCtr.y, d, d);
   }
 }
 
@@ -66,3 +85,11 @@ Vec2D modelToScreen(float x, float y) {
   return scoord;
 }
 
+void mousePressed() {
+  drawing = true;
+  newEarCtr = new Vec2D(mouseX, mouseY);
+}
+
+void mouseReleased(){
+  drawing = false;
+}
