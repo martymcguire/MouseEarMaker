@@ -6,6 +6,7 @@ import toxi.geom.mesh.subdiv.*;
 
 WETriangleMesh thing;
 float thingScale;
+ArrayList ears = new ArrayList();
 
 boolean drawing = false;
 Vec2D newEarCtr;
@@ -30,8 +31,18 @@ void draw() {
     endShape(CLOSE);
   }
 
+  // draw ears
+  drawEars();
+
   // draw new mouse ear, if any is being drawn
   drawNewMouseEar();
+}
+
+void drawEars() {
+    fill(8, 134, 86, 192);
+    for(Ear e : (ArrayList<Ear>) ears) {
+        ellipse(e.x, e.y, e.r*2, e.r*2);
+    }
 }
 
 void drawNewMouseEar() {
@@ -92,4 +103,20 @@ void mousePressed() {
 
 void mouseReleased(){
   drawing = false;
+  float magx = newEarCtr.x - mouseX;
+  float magy = newEarCtr.y - mouseY;
+  float r = sqrt(sq(magx) + sq(magy));
+  ears.add(new Ear(newEarCtr.x, newEarCtr.y, r));
+}
+
+class Ear {
+  float x;
+  float y;
+  float r;
+
+  public Ear(float _x, float _y, float _r) {
+    x = _x;
+    y = _y;
+    r = _r;
+  }
 }
