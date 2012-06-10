@@ -23,15 +23,22 @@ MouseEarMaker was built and tested on Mac OS X using the following software:
 Usage
 =====
 
+### Start up:
+
 1. Open the MouseEarMaker sketch in Processing and run it.
 2. Select your STL file from the Open File dialog.
 3. You'll see a 2D view of the bottom of your model - everywhere that it touches the build platform.
-4. Click to place a mouse ear. Drag to make the mouse ear bigger or smaller.
-5. Made a mistake? `&#8984;-z` will undo the last mouse ear.
-6. Finished? Press `&#8984;-s` to open the Save dialog.
-7. Choose a name for your new STL file.
-8. MouseEarMaker will generate a new OpenSCAD (`.scad`) file and run OpenSCAD to produce your mouse ear'd STL!
-9. Open the new STL in your favorite 3D printing software to slice and print!
+
+### Placing Mouse Ears
+
+![Placing some mouse ears](https://raw.github.com/martymcguire/MouseEarMaker/master/screenshots/screenshot1.png)
+
+1. Click to place a mouse ear. Drag to make the mouse ear bigger or smaller.
+2. Made a mistake? `&#8984;-z` will undo the last mouse ear.
+3. Finished? Press `&#8984;-s` to open the Save dialog.
+4. Choose a name for your new STL file.
+5. MouseEarMaker will generate a new OpenSCAD (`.scad`) file and run OpenSCAD to produce your mouse ear'd STL!
+6. Open the new STL in your favorite 3D printing software to slice and print!
 
 Troubleshooting
 ===============
