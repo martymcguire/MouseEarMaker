@@ -171,7 +171,7 @@ void keyReleased()
 
 void saveAndQuit() {
   // save where?
-  savePath = selectOutput("Save a .scad file...");  // Opens file chooser
+  savePath = selectOutput("Save a new STL file...");  // Opens file chooser
   if (savePath == null) {
     // If a file was not selected
     println("No output file was selected...");
