@@ -4,12 +4,17 @@ import toxi.geom.*;
 import toxi.geom.mesh.*;
 import toxi.geom.mesh.subdiv.*;
 
+String loadPath;
+String savePath;
+
 WETriangleMesh thing;
 float thingScale;
 ArrayList ears = new ArrayList();
 
 boolean drawing = false;
 Vec2D newEarCtr;
+
+boolean saving = false;
 
 boolean[] keys = new boolean[526];
 
@@ -38,6 +43,12 @@ void draw() {
 
   // draw new mouse ear, if any is being drawn
   drawNewMouseEar();
+
+  // are we done?
+  if(saving && new File(savePath).exists()) {
+     println("Saved!");
+     exit();
+  }
 }
 
 void drawEars() {
@@ -62,7 +73,7 @@ void drawNewMouseEar() {
 
 void loadModel() {
   // get a file to work with.
-  String loadPath = selectInput();  // Opens file chooser
+  loadPath = selectInput();  // Opens file chooser
   if (loadPath == null) {
     // If a file was not selected
     println("No file was selected...");
@@ -72,8 +83,7 @@ void loadModel() {
   }
   thing = new WETriangleMesh().addMesh(new STLReader().loadBinary(createInput(loadPath), "object", TriangleMesh.class));
   
-  // properly orient and scale mesh (?)
-  //thing.rotateX(HALF_PI);
+  // TODO: copy this WETriangleMesh so we can op on it at the end?
   
   PlaneSelector sel = new PlaneSelector(thing, Plane.XY, Plane.Classifier.FRONT);
   sel.selectVertices();
@@ -96,6 +106,13 @@ Vec2D modelToScreen(float x, float y) {
   scoord.x = (x * thingScale) + (width / 2);
   scoord.y = (y * thingScale) + (height / 2);
   return scoord;
+}
+
+Vec2D screenToModel(float x, float y) {
+  Vec2D mcoord = new Vec2D();
+  mcoord.x = (x - (width / 2)) / thingScale;
+  mcoord.y = (y - (height / 2)) / thingScale;
+  return mcoord;
 }
 
 void mousePressed() {
@@ -134,14 +151,74 @@ boolean checkKey(int k)
 void keyPressed()
 {
   keys[keyCode] = true;
+
   // ctrl-z / cmd-z = undo last ear
   if((checkKey(CONTROL) || checkKey(KeyEvent.VK_META)) && checkKey(KeyEvent.VK_Z)) {
     if(ears.size() > 0)
       ears.remove(ears.size() - 1);
+  }
+
+  // ctrl-s / cmd-s = save the file!
+  if((checkKey(CONTROL) || checkKey(KeyEvent.VK_META)) && checkKey(KeyEvent.VK_S)) {
+    saveAndQuit();
   }
 }
 
 void keyReleased()
 {
   keys[keyCode] = false;
+}
+
+void saveAndQuit() {
+  // save where?
+  savePath = selectOutput("Save a .scad file...");  // Opens file chooser
+  if (savePath == null) {
+    // If a file was not selected
+    println("No output file was selected...");
+  } else {
+    // If a file was selected, print path to folder
+    println(savePath);
+
+    // convert ears to model space
+    ArrayList<Ear> final_ears = new ArrayList<Ear>();
+    for(Ear e : (ArrayList<Ear>) ears) {
+      Vec2D pt = screenToModel(e.x, e.y);
+      final_ears.add(new Ear(pt.x, pt.y, (e.r / thingScale)));
+    }
+
+    writeOpenSCADFile(savePath + ".scad", loadPath, final_ears);
+    generateSTLFromSCAD(savePath, savePath + ".scad");
+  }
+}
+
+void writeOpenSCADFile(String savePath, String loadPath, ArrayList<Ear> final_ears) {
+  PrintWriter outfile = createWriter(savePath);
+  outfile.println("union() {");
+  outfile.println("  import_stl(\"" + loadPath + "\");");
+  outfile.println("  linear_extrude(height = 0.03) {");
+  for(Ear ear : final_ears) {
+     outfile.println("    translate([" + ear.x + ", " + ear.y + ",0]) circle(r = " + ear.r + ");");
+  }
+  outfile.println("  }");
+  outfile.println("}");
+  outfile.flush();
+  outfile.close();
+}
+
+void generateSTLFromSCAD(String stlPath, String scadPath) {
+    File scad_file = new File(scadPath);
+    File stl_file = new File(stlPath);
+    String[] exec = {"/usr/bin/open","/Applications/OpenSCAD.app","--args",
+                     "-s",
+                     stl_file.getAbsolutePath(),
+                     scad_file.getAbsolutePath()
+                     };
+
+    if(stl_file.exists()){
+      stl_file.delete();
+    }
+    saving = true;
+    println("Rendering w/ OpenSCAD...");
+    println(exec);
+    exec(exec);
 }
