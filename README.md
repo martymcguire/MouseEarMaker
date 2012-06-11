@@ -34,8 +34,8 @@ Usage
 ![Placing some mouse ears](https://raw.github.com/martymcguire/MouseEarMaker/master/screenshots/screenshot1.png)
 
 1. Click to place a mouse ear. Drag to make the mouse ear bigger or smaller.
-2. Made a mistake? `&#8984;-z` will undo the last mouse ear.
-3. Finished? Press `&#8984;-s` to open the Save dialog.
+2. Made a mistake? `⌘-z` will undo the last mouse ear.
+3. Finished? Press `⌘-s` to open the Save dialog.
 4. Choose a name for your new STL file.
 5. MouseEarMaker will generate a new OpenSCAD (`.scad`) file and run OpenSCAD to produce your mouse ear'd STL!
 6. Open the new STL in your favorite 3D printing software to slice and print!
